@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIZOU Agency | وكالة هيزو</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#F07020',
+                        'bg-deep': '#0A0A0A',
+                        'bg-surface': '#141414',
+                        'bg-border': '#1E1E1E',
+                        'text-muted': '#A0A0A0',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        french: ['DM Sans', 'sans-serif'],
+                        display: ['Bebas Neue', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --brand: #F07020;
+        }
+        
+        body {
+            background-color: #0A0A0A;
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            width: 8px; height: 8px; background: white; border-radius: 50%;
+            position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+        }
+        .cursor-follower {
+            width: 40px; height: 40px; border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%; position: fixed; top: -16px; left: -16px;
+            pointer-events: none; z-index: 9998; transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Animations */
+        @keyframes flutter {
+            0% { transform: scaleY(1) rotate(-5deg); }
+            100% { transform: scaleY(0.85) rotate(5deg); }
+        }
+        @keyframes grid-move {
+            from { background-position: 0 0; }
+            to { background-position: 0 600px; }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50% { opacity: 0.25; transform: scale(1.1); }
+        }
+
+        .grid-lines {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+        }
+
+        .reveal {
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .text-stroke-orange {
+            color: transparent;
+            -webkit-text-stroke: 1px #F07020;
+        }
+
+        /* French Version Overrides */
+        html.lang-fr, html.lang-fr * { font-family: 'DM Sans', sans-serif !important; }
+        html.lang-fr h1, html.lang-fr h2, html.lang-fr .display-font { 
+            font-family: 'Bebas Neue', sans-serif !important; 
+            letter-spacing: 3px !important;
+        }
+
+        @media (max-width: 768px) {
+            .custom-cursor, .cursor-follower { display: none !important; }
+            body { cursor: auto !important; }
+        }
+    </style>
+</head>
+<body class="selection:bg-brand selection:text-white">
+
+    <!-- CUSTOM CURSOR -->
+    <div id="cursor" class="custom-cursor"></div>
+    <div id="cursor-follower" class="cursor-follower"></div>
+
+    <!-- PRELOADER -->
+    <div id="preloader" class="fixed inset-0 bg-bg-deep flex flex-col items-center justify-center z-[9999] transition-opacity duration-700">
+        <svg width="200" height="200" viewBox="0 0 100 100" style="animation: flutter 0.8s ease-in-out infinite alternate;">
+            <defs>
+                <clipPath id="butterfly-clip">
+                    <path d="M50 50 C30 20, 0 10, 5 40 C10 60, 35 65, 50 50Z"/>
+                    <path d="M50 50 C70 20, 100 10, 95 40 C90 60, 65 65, 50 50Z"/>
+                    <path d="M50 50 C25 60, 5 80, 15 90 C30 100, 45 75, 50 50Z"/>
+                    <path d="M50 50 C75 60, 95 80, 85 90 C70 100, 55 75, 50 50Z"/>
+                </clipPath>
+            </defs>
+            <path d="M50 50 C30 20, 0 10, 5 40 C10 60, 35 65, 50 50Z" fill="none" stroke="#F07020" stroke-width="1" opacity="0.2"/>
+            <path d="M50 50 C70 20, 100 10, 95 40 C90 60, 65 65, 50 50Z" fill="none" stroke="#F07020" stroke-width="1" opacity="0.2"/>
+            <path d="M50 50 C25 60, 5 80, 15 90 C30 100, 45 75, 50 50Z" fill="none" stroke="#F07020" stroke-width="1" opacity="0.2"/>
+            <path d="M50 50 C75 60, 95 80, 85 90 C70 100, 55 75, 50 50Z" fill="none" stroke="#F07020" stroke-width="1" opacity="0.2"/>
+            <g clip-path="url(#butterfly-clip)">
+                <rect id="loader-fill" x="0" y="100" width="100" height="100" fill="#F07020"/>
+            </g>
+            <ellipse cx="50" cy="55" rx="2" ry="12" fill="#F07020"/>
+        </svg>
+        <div id="loader-text" class="mt-8 text-brand font-bold tracking-widest text-xs opacity-70">0%</div>
+    </div>
+
+    <!-- NAVBAR -->
+    <header id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 py-4 px-6">
+        <div class="container mx-auto flex flex-row-reverse justify-between items-center">
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center gap-8 flex-row-reverse">
+                <div class="flex items-center gap-10 flex-row-reverse">
+                    <a href="#" data-t="home" class="text-sm font-bold tracking-widest hover:text-brand transition-colors">الرئيسية</a>
+                    <a href="#services" data-t="services" class="text-sm font-bold tracking-widest hover:text-brand transition-colors">خدماتنا</a>
+                    <a href="#testimonials" data-t="testimonials" class="text-sm font-bold tracking-widest hover:text-brand transition-colors">آراء العملاء</a>
+                    <a href="#contact" data-t="contact" class="text-sm font-bold tracking-widest hover:text-brand transition-colors">تواصل</a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div onclick="toggleLang()" class="relative w-14 h-7 bg-white/5 border border-white/10 rounded-full cursor-pointer p-1 flex items-center group">
+                        <div id="lang-toggle-dot" class="w-5 h-5 bg-brand rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(240,112,32,0.5)]"></div>
+                        <div class="absolute inset-0 flex justify-between px-2 items-center pointer-events-none text-[8px] font-black opacity-40">
+                            <span>AR</span><span>FR</span>
+                        </div>
+                    </div>
+                    <button data-t="bookConsultation" class="px-8 py-3 bg-white text-bg-deep text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-brand hover:text-white transition-all shadow-xl">احجز جلسة تصوير</button>
+                </div>
+            </div>
+
+            <!-- Logo -->
+            <div class="bg-brand rounded-xl p-1 px-3 flex items-center justify-center">
+                <img src="https://i.imgur.com/QZigE0P.png" alt="HIZOU" class="h-8 w-auto brightness-0 invert">
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-white" onclick="toggleMobileMenu()">
+                <i data-lucide="menu" id="menu-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden bg-bg-deep">
+        <div class="absolute inset-0 opacity-20 animate-grid-move grid-lines" style="background-image: linear-gradient(to right, rgba(240,112,32,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(240,112,32,0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
+        <canvas id="particles-canvas" class="absolute inset-0 z-0 pointer-events-none"></canvas>
+        
+        <div class="container mx-auto px-6 z-10 text-center">
+            <div class="flex flex-col items-center">
+                <div class="relative">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-brand/15 blur-[120px] rounded-full animate-pulse"></div>
+                    <h1 class="text-[18vw] md:text-[12vw] font-black leading-none tracking-tighter uppercase relative drop-shadow-[0_0_30px_rgba(240,112,32,0.4)]">HIZOU</h1>
+                    <div class="mt-4 text-3xl md:text-6xl font-black text-white h-20 flex items-center justify-center">
+                        <span id="typing-text"></span><span class="w-1 h-10 bg-brand ml-2 animate-pulse"></span>
+                    </div>
+                </div>
+                
+                <p data-t="heroSub" class="mt-12 max-w-md text-sm uppercase tracking-[0.3em] font-medium text-white/70">من التصوير الاحترافي إلى المونتاج الإبداعي — نحوّل أفكارك إلى محتوى بصري يأسر الجمهور</p>
+                
+                <div class="mt-12 flex flex-col md:flex-row items-center gap-6">
+                    <a href="#services" data-t="discoverServices" class="px-12 py-6 bg-brand text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full hover:bg-white hover:text-bg-deep transition-all shadow-2xl shadow-brand/40">شاهد أعمالنا</a>
+                    <a href="#contact" data-t="bookPhotoshoot" class="px-12 py-6 border border-white/20 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full hover:bg-white hover:text-bg-deep transition-all">احجز جلسة تصوير</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="py-32 bg-bg-deep">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="md:col-span-2 md:row-span-2 bg-brand p-12 rounded-[40px] flex flex-col justify-between relative overflow-hidden group reveal">
+                    <div class="relative z-10">
+                        <div class="text-8xl md:text-10xl font-black text-white tracking-tighter mb-4">+200</div>
+                        <div data-t="projectsDelivered" class="text-xl font-black text-bg-deep uppercase tracking-widest">فيديو منتج</div>
+                    </div>
+                    <p data-t="experienceText" class="mt-8 text-sm font-medium text-white/70 max-w-xs">خبرتنا في صناعة المحتوى البصري مكنتنا من بناء قصص نجاح حقيقية مع كبرى العلامات التجارية.</p>
+                </div>
+                <div class="bg-bg-surface p-8 rounded-[40px] border border-white/5 flex flex-col items-center justify-center text-center reveal">
+                    <div class="text-5xl font-black text-brand mb-2">+50</div>
+                    <div data-t="happyClients" class="text-[10px] font-black uppercase tracking-widest text-white/40">عميل راضٍ</div>
+                </div>
+                <div class="bg-bg-surface p-8 rounded-[40px] border border-white/5 flex flex-col items-center justify-center text-center reveal">
+                    <div class="text-5xl font-black text-brand mb-2">30K</div>
+                    <div data-t="followers" class="text-[10px] font-black uppercase tracking-widest text-white/40">متابع</div>
+                </div>
+                <div class="bg-bg-surface p-8 rounded-[40px] border border-white/5 flex flex-col items-center justify-center text-center reveal">
+                    <div class="text-5xl font-black text-brand mb-2">3+</div>
+                    <div data-t="yearsExperience" class="text-[10px] font-black uppercase tracking-widest text-white/40">سنوات خبرة</div>
+                </div>
+                <div class="md:col-span-2 bg-white p-10 rounded-[40px] flex items-center justify-between reveal">
+                    <div>
+                        <div data-t="ourTeam" class="text-3xl font-black text-bg-deep mb-2">فريقنا</div>
+                        <div data-t="teamDesc" class="text-xs font-medium text-bg-deep/60">خبراء في صناعة المحتوى والتصوير الاحترافي</div>
+                    </div>
+                    <div class="w-12 h-12 bg-brand rounded-full flex items-center justify-center text-white">
+                        <i data-lucide="arrow-up-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services" class="py-32 bg-bg-surface relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5 grid-lines"></div>
+        <div class="container mx-auto px-6">
+            <div class="mb-20 text-center md:text-right">
+                <span data-t="services" class="text-xs font-black uppercase tracking-[0.3em] text-brand mb-4 block">خدماتنا</span>
+                <h2 data-t="servicesTitle" class="text-5xl md:text-7xl font-black leading-tight">رؤية <span class="text-stroke-orange">متكاملة</span> للتميز البصري</h2>
+            </div>
+            
+            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Services will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="py-32 bg-bg-deep border-t border-white/5">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20">
+                <span data-t="whatTheySay" class="text-xs font-bold uppercase tracking-[0.3em] text-brand mb-4 block">قالوا عنا</span>
+                <h2 data-t="testimonialsTitle" class="text-4xl md:text-6xl font-black">ثقة عملائنا هي <span class="italic text-brand text-stroke-orange">سر نجاحنا</span></h2>
+            </div>
+            <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonials will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="py-24 bg-bg-deep border-t border-white/5">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+                <div class="bg-bg-surface p-10 rounded-[40px] border border-white/5">
+                    <h2 data-t="startJourney" class="text-4xl font-black mb-10">لنبدأ <span class="text-brand">رحلتك</span></h2>
+                    <form class="space-y-6" onsubmit="event.preventDefault(); alert('تم استلام رسالتك بنجاح!')">
+                        <input type="text" data-t-placeholder="namePlaceholder" placeholder="الاسم الكامل" class="w-full bg-bg-deep border border-white/10 p-5 rounded-2xl outline-none focus:border-brand transition-all">
+                        <input type="email" placeholder="example@gmail.com" class="w-full bg-bg-deep border border-white/10 p-5 rounded-2xl outline-none focus:border-brand transition-all">
+                        <textarea rows="4" placeholder="كيف يمكننا مساعدتك؟" class="w-full bg-bg-deep border border-white/10 p-5 rounded-2xl outline-none focus:border-brand transition-all"></textarea>
+                        <button class="w-full bg-brand text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:brightness-110 transition-all">إرسال الرسالة</button>
+                    </form>
+                </div>
+                <div class="flex flex-col justify-center gap-10">
+                    <div class="flex items-center gap-6 flex-row-reverse">
+                        <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center text-white shadow-lg"><i data-lucide="phone"></i></div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-white/40 uppercase tracking-widest">اتصل بنا</p>
+                            <p class="text-2xl font-black">0775 64 34 33</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 flex-row-reverse">
+                        <div class="w-16 h-16 bg-[#25D366] rounded-2xl flex items-center justify-center text-white shadow-lg"><i data-lucide="message-circle"></i></div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-white/40 uppercase tracking-widest">واتساب</p>
+                            <p class="text-2xl font-black">0775 64 34 33</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 flex-row-reverse">
+                        <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center text-white shadow-lg"><i data-lucide="map-pin"></i></div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-white/40 uppercase tracking-widest">موقعنا</p>
+                            <p class="text-2xl font-black">Said Hamdine, Algiers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row-reverse justify-between items-center gap-6 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+                <p>© 2025 Agence HIZOU — Algérie. Tous droits réservés.</p>
+                <div class="flex gap-8">
+                    <a href="#" class="hover:text-brand transition-colors">Politique</a>
+                    <a href="#" class="hover:text-brand transition-colors">Termes</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-[90%] bg-bg-surface/80 backdrop-blur-xl border border-white/10 rounded-full p-2 flex justify-around items-center shadow-2xl">
+        <a href="#" class="p-2 text-white/40 hover:text-brand"><i data-lucide="home"></i></a>
+        <a href="#services" class="p-2 text-white/40 hover:text-brand"><i data-lucide="layers"></i></a>
+        <a href="#testimonials" class="p-2 text-white/40 hover:text-brand"><i data-lucide="sparkles"></i></a>
+        <a href="#contact" class="p-2 text-white/40 hover:text-brand"><i data-lucide="phone"></i></a>
+        <div class="w-[1px] h-6 bg-white/10"></div>
+        <div onclick="toggleLang()" class="p-2 text-brand font-black text-[10px]">AR/FR</div>
+    </div>
+
+    <!-- CHATBOT -->
+    <div id="chatbot-container" class="fixed bottom-8 left-8 z-[60] flex flex-col items-start">
+        <div id="chat-window" class="hidden mb-4 w-[320px] md:w-[380px] h-[450px] bg-bg-surface border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all">
+            <div class="p-4 bg-brand flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"><i data-lucide="bot" class="text-white" size="16"></i></div>
+                    <div>
+                        <h3 id="chat-title" class="text-white font-bold text-xs">مساعد HIZOU الذكي</h3>
+                        <div class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div><span class="text-white/70 text-[8px]">متصل الآن</span></div>
+                    </div>
+                </div>
+                <button onclick="toggleChat()"><i data-lucide="x" class="text-white" size="18"></i></button>
+            </div>
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 text-xs"></div>
+            <div class="p-4 border-t border-white/5 bg-bg-deep/50 flex gap-2">
+                <input type="text" id="chat-input" placeholder="اكتب رسالتك..." class="flex-1 bg-bg-surface border border-white/10 rounded-xl py-2 px-4 text-xs text-white outline-none focus:border-brand">
+                <button onclick="sendChatMessage()" class="w-10 h-10 bg-brand text-white rounded-xl flex items-center justify-center"><i data-lucide="send" size="16"></i></button>
+            </div>
+        </div>
+        <button onclick="toggleChat()" id="chat-toggle" class="w-14 h-14 bg-brand text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all">
+            <i data-lucide="message-square"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- CONFIG & DATA ---
+        let currentLang = 'ar';
+        const translations = {
+            ar: {
+                home: 'الرئيسية', services: 'خدماتنا', testimonials: 'آراء العملاء', contact: 'تواصل',
+                bookConsultation: 'احجز جلسة تصوير', heroSub: 'من التصوير الاحترافي إلى المونتاج الإبداعي — نحوّل أفكارك إلى محتوى بصري يأسر الجمهور',
+                discoverServices: 'شاهد أعمالنا', bookPhotoshoot: 'احجز جلسة تصوير', projectsDelivered: 'فيديو منتج',
+                experienceText: 'خبرتنا في صناعة المحتوى البصري مكنتنا من بناء قصص نجاح حقيقية مع كبرى العلامات التجارية.',
+                happyClients: 'عميل راضٍ', followers: 'متابع', yearsExperience: 'سنوات خبرة', ourTeam: 'فريقنا',
+                teamDesc: 'خبراء في صناعة المحتوى والتصوير الاحترافي', servicesTitle: 'رؤية متكاملة للتميز البصري',
+                whatTheySay: 'قالوا عنا', testimonialsTitle: 'ثقة عملائنا هي سر نجاحنا', startJourney: 'لنبدأ رحلتك',
+                namePlaceholder: 'محمد علي', heroTexts: ["نصنع مشاهد تبقى في الذاكرة", "نحوّل أفكارك إلى واقع", "محتوى بصري يأسر الجمهور"]
+            },
+            fr: {
+                home: 'Accueil', services: 'Services', testimonials: 'Témoignages', contact: 'Contact',
+                bookConsultation: 'Réserver', heroSub: 'Du tournage professionnel au montage créatif — nous transformons vos idées en contenu visuel captivant',
+                discoverServices: 'Nos Travaux', bookPhotoshoot: 'Réserver un tournage', projectsDelivered: 'Vidéos produites',
+                experienceText: 'Notre expérience nous a permis de bâtir de véritables success stories avec de grandes marques.',
+                happyClients: 'Clients satisfaits', followers: 'Abonnés', yearsExperience: 'Ans d\'expérience', ourTeam: 'Équipe',
+                teamDesc: 'Experts en création de contenu et tournage professionnel', servicesTitle: 'Une vision intégrée pour l\'excellence',
+                whatTheySay: 'Témoignages', testimonialsTitle: 'La confiance est notre succès', startJourney: 'Commençons',
+                namePlaceholder: 'Mohamed Ali', heroTexts: ["Des scènes mémorables", "Vos idées en réalité", "Contenu captivant"]
+            }
+        };
+
+        const servicesData = [
+            { id: 'filming', title_ar: 'التصوير الاحترافي', title_fr: 'Tournage Pro', icon: 'video', img: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400' },
+            { id: 'editing', title_ar: 'مونتاج الفيديو', title_fr: 'Montage Vidéo', icon: 'clapperboard', img: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400' },
+            { id: 'ugc', title_ar: 'محتوى UGC', title_fr: 'Contenu UGC', icon: 'smartphone', img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400' }
+        ];
+
+        const testimonialsData = [
+            { ar: "شغل تصوير احترافي جداً، اللقطات طلعت فوق التوقعات.", fr: "Travail de tournage très professionnel, au-delà des attentes.", name: "Karim B.", company: "Alger" },
+            { ar: "المونتاج كان رائع، الفيديو الترويجي ضاعف طلباتنا.", fr: "Le montage était superbe, nos commandes ont doublé.", name: "Amina H.", company: "Oran" },
+            { ar: "فريق جدي ومحترف، سلّموا في الوقت وبجودة عالية.", fr: "Équipe sérieuse et professionnelle, livraison à temps.", name: "Youssef M.", company: "Constantine" }
+        ];
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initParticles();
+            initPreloader();
+            initReveal();
+            initCursor();
+            updateUI();
+            startTyping();
+        });
+
+        // --- CORE LOGIC ---
+        function toggleLang() {
+            currentLang = currentLang === 'ar' ? 'fr' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.classList.toggle('lang-fr', currentLang === 'fr');
+            document.getElementById('lang-toggle-dot').style.marginLeft = currentLang === 'ar' ? '0' : '28px';
+            updateUI();
+        }
+
+        function updateUI() {
+            const t = translations[currentLang];
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (t[key]) el.textContent = t[key];
+            });
+            document.querySelectorAll('[data-t-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-t-placeholder');
+                if (t[key]) el.placeholder = t[key];
+            });
+
+            // Render Grids
+            const sGrid = document.getElementById('services-grid');
+            sGrid.innerHTML = servicesData.map(s => `
+                <div class="bg-bg-deep p-10 rounded-[40px] border border-white/5 relative overflow-hidden group reveal">
+                    <img src="${s.img}" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700 grayscale">
+                    <div class="relative z-10">
+                        <div class="text-brand mb-8"><i data-lucide="${s.icon}" size="40"></i></div>
+                        <h3 class="text-2xl font-black mb-4">${currentLang === 'ar' ? s.title_ar : s.title_fr}</h3>
+                    </div>
+                </div>
+            `).join('');
+
+            const tGrid = document.getElementById('testimonials-grid');
+            tGrid.innerHTML = testimonialsData.map(t => `
+                <div class="p-8 bg-bg-surface border border-white/5 rounded-3xl reveal">
+                    <div class="flex gap-1 mb-6 text-brand"><i data-lucide="star" size="14" fill="currentColor"></i><i data-lucide="star" size="14" fill="currentColor"></i><i data-lucide="star" size="14" fill="currentColor"></i><i data-lucide="star" size="14" fill="currentColor"></i><i data-lucide="star" size="14" fill="currentColor"></i></div>
+                    <p class="text-lg mb-8 italic opacity-80">"${currentLang === 'ar' ? t.ar : t.fr}"</p>
+                    <div class="font-bold">${t.name}</div>
+                    <div class="text-[10px] text-white/40 uppercase tracking-widest">${t.company}</div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        // --- ANIMATIONS ---
+        function initPreloader() {
+            let progress = 0;
+            const fill = document.getElementById('loader-fill');
+            const text = document.getElementById('loader-text');
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('preloader').style.opacity = '0';
+                        setTimeout(() => document.getElementById('preloader').remove(), 700);
+                    }, 400);
+                }
+                fill.setAttribute('y', 100 - progress);
+                text.textContent = Math.floor(progress) + '%';
+            }, 100);
+        }
+
+        function initReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        function initCursor() {
+            const cursor = document.getElementById('cursor');
+            const follower = document.getElementById('cursor-follower');
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                follower.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            });
+            document.querySelectorAll('a, button, .group').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-active'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-active'));
+            });
+        }
+
+        function startTyping() {
+            const el = document.getElementById('typing-text');
+            let textIdx = 0;
+            let charIdx = 0;
+            let isDeleting = false;
+
+            function type() {
+                const texts = translations[currentLang].heroTexts;
+                const current = texts[textIdx];
+                
+                if (isDeleting) {
+                    el.textContent = current.substring(0, charIdx - 1);
+                    charIdx--;
+                } else {
+                    el.textContent = current.substring(0, charIdx + 1);
+                    charIdx++;
+                }
+
+                let speed = isDeleting ? 50 : 150;
+                if (!isDeleting && charIdx === current.length) {
+                    speed = 2000;
+                    isDeleting = true;
+                } else if (isDeleting && charIdx === 0) {
+                    isDeleting = false;
+                    textIdx = (textIdx + 1) % texts.length;
+                    speed = 500;
+                }
+                setTimeout(type, speed);
+            }
+            type();
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                }
+                update() {
+                    this.x += this.vx; this.y += this.vy;
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, 1, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(240, 112, 32, 0.3)'; ctx.fill();
+                }
+            }
+
+            for(let i=0; i<40; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.update(); p.draw();
+                    for(let j=i+1; j<particles.length; j++) {
+                        const dx = p.x - particles[j].x, dy = p.y - particles[j].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 150) {
+                            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(240, 112, 32, ${0.1 * (1 - dist/150)})`; ctx.stroke();
+                        }
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // --- CHATBOT LOGIC ---
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.classList.toggle('hidden');
+            if (!win.classList.contains('hidden')) {
+                document.getElementById('chat-input').focus();
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            addMessage('user', msg);
+            input.value = '';
+
+            // Note: For GitHub Pages, you'd ideally use a proxy or prompt for a key.
+            // This is a placeholder for the Gemini API logic.
+            const loadingId = addMessage('model', '...');
+            
+            setTimeout(() => {
+                const response = currentLang === 'ar' 
+                    ? "شكراً لتواصلك مع HIZOU! أنا مساعدك الذكي. كيف يمكنني مساعدتك في مشروعك اليوم؟" 
+                    : "Merci de contacter HIZOU ! Je suis votre assistant. Comment puis-je vous aider aujourd'hui ?";
+                updateMessage(loadingId, response);
+            }, 1000);
+        }
+
+        function addMessage(role, text) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+            const id = 'msg-' + Date.now();
+            div.innerHTML = `<div id="${id}" class="max-w-[80%] p-3 rounded-2xl ${role === 'user' ? 'bg-brand text-white rounded-tr-none' : 'bg-bg-deep border border-white/5 rounded-tl-none'}">${text}</div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function updateMessage(id, text) {
+            document.getElementById(id).textContent = text;
+        }
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-bg-deep/80', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+            } else {
+                nav.classList.remove('bg-bg-deep/80', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+            }
+        });
+    </script>
+</body>
+</html>
